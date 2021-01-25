@@ -43,7 +43,12 @@ function loadJobs(){
     $.getJSON("http://sandbox.gibm.ch/berufe.php", function(jobs){
             if (jobs.length > 0){
                 $.each(jobs, function (key, value){
-                        $("#jobs").append(new Option(value.beruf_name, value.beruf_id))
+                        if (localStorage.getItem("job") != null && value.beruf_id === localStorage.getItem("job")){
+                            $("#jobs").append(new Option(value.beruf_name, value.beruf_id, true, true))
+                            loadClasses(value.beruf_id)
+                        }else {
+                            $("#jobs").append(new Option(value.beruf_name, value.beruf_id))
+                        }
                     })
             }
         }
@@ -53,12 +58,16 @@ function loadJobs(){
 }
 
 $("#jobs").change(function (){
-    loadClasses($("#jobs").find(":selected").val())
+    const selectedJob = $("#jobs").find(":selected").val();
+    localStorage.setItem("job", selectedJob)
+    loadClasses(selectedJob)
 })
 
 $("#classes").change(function (){
     date = new Date()
-    loadTimetable($("#classes").find(':selected').val())
+    const selectedClass = $("#classes").find(':selected').val()
+    localStorage.setItem("class", $("#classes").find(':selected').val())
+    loadTimetable(selectedClass)
 })
 
 $("#previousWeek").click(function (){
@@ -84,7 +93,11 @@ function loadClasses(jobId){
         if (classes.length > 0){
             $("#classes").append("<option selected disabled>-- Wähle eine Klasse aus --</option>")
             $.each(classes, function (key, value){
-                $("#classes").append(new Option(value.klasse_longname, value.klasse_id))
+                if (localStorage.getItem("class") != null && value.klasse_id === localStorage.getItem("class")){
+                    $("#classes").append(new Option(value.klasse_longname, value.klasse_id, true, true))
+                }else {
+                    $("#classes").append(new Option(value.klasse_longname, value.klasse_id))
+                }
             })
         }else{
             $("#classes-wrapper").hide()
