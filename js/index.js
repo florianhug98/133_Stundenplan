@@ -95,6 +95,7 @@ function loadClasses(jobId){
             $.each(classes, function (key, value){
                 if (localStorage.getItem("class") != null && value.klasse_id === localStorage.getItem("class")){
                     $("#classes").append(new Option(value.klasse_longname, value.klasse_id, true, true))
+                    loadTimetable(value.klasse_id)
                 }else {
                     $("#classes").append(new Option(value.klasse_longname, value.klasse_id))
                 }
@@ -115,7 +116,7 @@ function loadTimetable(classId){
     $("#timetable tbody tr").remove().end()
     $.getJSON("http://sandbox.gibm.ch/tafel.php?klasse_id=" + classId + "&woche=" + date.getWeek() + '-' + date.getFullYear(), function (timetable){
         if (timetable.length > 0){
-            $("#timetable-wrapper").show()
+            $("#timetable-wrapper").fadeIn("fast")
             $.each(timetable, function (key, value){
                 $("#timetable").append(
                     "<tr>" +
@@ -129,7 +130,7 @@ function loadTimetable(classId){
                     "</tr>")
             })
         }else{
-            $("#noTimetableAvailable").show()
+            $("#noTimetableAvailable").fadeIn("fast")
         }
     })
 }
