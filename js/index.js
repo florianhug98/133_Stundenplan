@@ -1,4 +1,5 @@
 $(document).ready(
+
 setup())
 
 let date = new Date();
@@ -57,7 +58,7 @@ function loadJobs(){
             }
         }
     ).fail(function(){
-        $("#jobLoadingError").show()
+        errorDiv("Beim laden der Berufe ist ein Fehler aufgetreten", true)
     })
 }
 
@@ -107,10 +108,10 @@ function loadClasses(jobId){
                 $("#classes-wrapper").fadeIn("fast")
             }else{
                 $("#classes-wrapper").hide()
-                $("#noClassesAvailable").show()
+                errorDiv("Für den gewählten Beruf sind keine Klassen vorhanden", false)
             }
         }).fail(function () {
-        $("#classLoadingError").show();
+            errorDiv("Beim laden der Berufe ist ein Fehler aufgetreten", true)
     })
 }
 
@@ -136,22 +137,29 @@ function loadTimetable(classId){
                         "</tr>")
                 })
             }else{
-                $("#noTimetableAvailable").fadeIn("fast")
+                errorDiv("Für den Zeitraum ist kein Stundenplan vorhanden", false)
             }
         })
         .fail(function(){
-            $("#timetableLoadingError").fadeIn("fast")
+            errorDiv("Beim laden des Stundenplanes ist ein Fehler aufgetreten", true)
         })
+}
+
+function errorDiv(error, fatal){
+    if (fatal){
+        $(".content").append(
+            "<div id=\"error\" class=\"alert alert-danger\" role=\"alert\">\n" + error + "</div>"
+        ).fadeIn("fast")
+    }else {
+        $(".content").append(
+            "<div id=\"error\" class=\"alert alert-warning\" role=\"alert\">\n" + error + "</div>"
+        ).fadeIn("fast")
+    }
 }
 
 function resetWarnings(){
     $("#timetable-wrapper").hide()
     $("#weekSelector").hide()
 
-    $("#noClassesAvailable").hide()
-    $("#noTimetableAvailable").hide()
-
-    $("#classLoadingError").hide()
-    $("#jobLoadingError").hide()
-    $("#timetableLoadingError").hide()
+    $("#error").remove()
 }
