@@ -25,13 +25,15 @@
                 <option selected disabled>-- Wähle eine Klasse aus --</option>
             </select>
         </div>
-        <div class="mx-auto m-3 block" id="weekSelector">
-            <button id="previousWeek" class="btn btn-primary "><<<</button>
-            <span id="selectedWeek" class="m-3"></span>
-            <button id="nextWeek" class="btn btn-primary ">>>></button><br>
+        <div class="text-center" id="weekSelectorWrapper">
+            <div class="btn-group" role="group" id="weekSelector">
+                <button type="button" class="btn btn-primary" id="previousWeek"> <<< </button>
+                <button disabled type="button" class="btn btn-primary" id="selectedWeek"></button>
+                <button type="button" class="btn btn-primary" id="nextWeek"> >>> </button>
+            </div>
         </div>
-        <div id="timetable-wrapper">
-            <table id="timetable" class="table table-responsive">
+        <div id="timetable-wrapper" class="table-responsive">
+            <table id="timetable" class="table">
                 <thead>
                 <tr>
                     <th scope="col">Datum</th>
