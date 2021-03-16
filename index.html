@@ -32,9 +32,9 @@
             </select>
         </div>
         <div class="mx-auto m-3 block" id="weekSelector">
-            <button id="previousWeek" class="btn btn-primary "><--- Vorherige Woche</button>
+            <button id="previousWeek" class="btn btn-primary "><<<</button>
             <span id="selectedWeek" class="m-3"></span>
-            <button id="nextWeek" class="btn btn-primary ">Nächste Woche ---></button><br>
+            <button id="nextWeek" class="btn btn-primary ">>>></button><br>
         </div>
         <div id="timetable-wrapper">
             <table id="timetable" class="table table-responsive">
@@ -59,6 +59,9 @@
         </div>
         <div id="noTimetableAvailable" class="alert alert-warning" role="alert">
             Für die ausgewählte Zeitperiode ist kein Stundenplan vorhanden!
+        </div>
+        <div id="timetableLoadingError" class="alert alert-warning" role="alert">
+            Beim Laden des Stundenplanes ist ein Fehler aufgetreten!
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

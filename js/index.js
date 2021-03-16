@@ -1,6 +1,7 @@
-let date = new Date();
+$(document).ready(
+setup())
 
-$(document).ready(setup())
+let date = new Date();
 
 // Returns the ISO week of the date.
 Date.prototype.getWeek = function() {
@@ -30,30 +31,33 @@ Date.prototype.getFullDay = function (day){
         case "3": return "Mittwoch";
         case "4": return "Donnserstag";
         case "5": return "Freitag";
+        case "6": return "Samstag";
+        case "7": return "Sonntag";
     }
 }
 
-
 function setup(){
+    $("#classes-wrapper").hide()
     resetWarnings()
     loadJobs()
 }
 
 function loadJobs(){
-    $.getJSON("http://sandbox.gibm.ch/berufe.php", function(jobs){
+    $.getJSON("http://sandbox.gibm.ch/berufe.php")
+        .done(function (jobs){
             if (jobs.length > 0){
                 $.each(jobs, function (key, value){
-                        if (localStorage.getItem("job") != null && value.beruf_id === localStorage.getItem("job")){
-                            $("#jobs").append(new Option(value.beruf_name, value.beruf_id, true, true))
-                            loadClasses(value.beruf_id)
-                        }else {
-                            $("#jobs").append(new Option(value.beruf_name, value.beruf_id))
-                        }
-                    })
+                    if (localStorage.getItem("job") != null && value.beruf_id === localStorage.getItem("job")){
+                        $("#jobs").append(new Option(value.beruf_name, value.beruf_id, true, true))
+                        loadClasses(value.beruf_id)
+                    }else {
+                        $("#jobs").append(new Option(value.beruf_name, value.beruf_id))
+                    }
+                })
             }
         }
-    ).fail(function (){
-        $("#jobLoadingError").show();
+    ).fail(function(){
+        $("#jobLoadingError").show()
     })
 }
 
@@ -87,24 +91,25 @@ function updateWeekSelector(){
 
 function loadClasses(jobId){
     resetWarnings()
-    $("#classes-wrapper").show()
     $("#classes").find('option').remove().end();
-    $.getJSON("http://sandbox.gibm.ch/klassen.php?beruf_id=" + jobId, function (classes){
-        if (classes.length > 0){
-            $("#classes").append("<option selected disabled>-- Wähle eine Klasse aus --</option>")
-            $.each(classes, function (key, value){
-                if (localStorage.getItem("class") != null && value.klasse_id === localStorage.getItem("class")){
-                    $("#classes").append(new Option(value.klasse_longname, value.klasse_id, true, true))
-                    loadTimetable(value.klasse_id)
-                }else {
-                    $("#classes").append(new Option(value.klasse_longname, value.klasse_id))
-                }
-            })
-        }else{
-            $("#classes-wrapper").hide()
-            $("#noClassesAvailable").show()
-        }
-    }).fail(function () {
+    $.getJSON("http://sandbox.gibm.ch/klassen.php?beruf_id=" + jobId)
+        .done(function (classes){
+            if (classes.length > 0){
+                $("#classes").append("<option selected disabled>-- Wähle eine Klasse aus --</option>")
+                $.each(classes, function (key, value){
+                    if (localStorage.getItem("class") != null && value.klasse_id === localStorage.getItem("class")){
+                        $("#classes").append(new Option(value.klasse_longname, value.klasse_id, true, true))
+                        loadTimetable(value.klasse_id)
+                    }else {
+                        $("#classes").append(new Option(value.klasse_longname, value.klasse_id))
+                    }
+                })
+                $("#classes-wrapper").fadeIn("fast")
+            }else{
+                $("#classes-wrapper").hide()
+                $("#noClassesAvailable").show()
+            }
+        }).fail(function () {
         $("#classLoadingError").show();
     })
 }
@@ -114,25 +119,29 @@ function loadTimetable(classId){
     $("#selectedWeek").text((date.getWeek() < 10 ? "0" + date.getWeek() : date.getWeek()) + "-" + date.getFullYear());
     $("#weekSelector").show()
     $("#timetable tbody tr").remove().end()
-    $.getJSON("http://sandbox.gibm.ch/tafel.php?klasse_id=" + classId + "&woche=" + date.getWeek() + '-' + date.getFullYear(), function (timetable){
-        if (timetable.length > 0){
-            $("#timetable-wrapper").fadeIn("fast")
-            $.each(timetable, function (key, value){
-                $("#timetable").append(
-                    "<tr>" +
-                    "<td>" + value.tafel_datum + "</td>" +
-                    "<td>" + date.getFullDay(value.tafel_wochentag) + "</td>" +
-                    "<td>" + value.tafel_von + "</td>" +
-                    "<td>" + value.tafel_bis + "</td>" +
-                    "<td>" + value.tafel_longfach + "</td>" +
-                    "<td>" + value.tafel_lehrer + "</td>" +
-                    "<td>" + value.tafel_raum + "</td>" +
-                    "</tr>")
-            })
-        }else{
-            $("#noTimetableAvailable").fadeIn("fast")
-        }
-    })
+    $.getJSON("http://sandbox.gibm.ch/tafel.php?klasse_id=" + classId + "&woche=" + date.getWeek() + '-' + date.getFullYear())
+        .done(function (timetable){
+            if (timetable.length > 0){
+                $("#timetable-wrapper").fadeIn("fast")
+                $.each(timetable, function (key, value){
+                    $("#timetable").append(
+                        "<tr>" +
+                        "<td>" + value.tafel_datum + "</td>" +
+                        "<td>" + date.getFullDay(value.tafel_wochentag) + "</td>" +
+                        "<td>" + value.tafel_von + "</td>" +
+                        "<td>" + value.tafel_bis + "</td>" +
+                        "<td>" + value.tafel_longfach + "</td>" +
+                        "<td>" + value.tafel_lehrer + "</td>" +
+                        "<td>" + value.tafel_raum + "</td>" +
+                        "</tr>")
+                })
+            }else{
+                $("#noTimetableAvailable").fadeIn("fast")
+            }
+        })
+        .fail(function(){
+            $("#timetableLoadingError").fadeIn("fast")
+        })
 }
 
 function resetWarnings(){
@@ -144,4 +153,5 @@ function resetWarnings(){
 
     $("#classLoadingError").hide()
     $("#jobLoadingError").hide()
+    $("#timetableLoadingError").hide()
 }
