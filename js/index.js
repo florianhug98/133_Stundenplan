@@ -4,7 +4,10 @@ setup())
 
 let date = new Date();
 
-// Returns the ISO week of the date.
+/**
+ * Gibt die ISO Woche des Datums
+ * @returns {number} - Wochennummer innerhalb des Jahres
+ */
 Date.prototype.getWeek = function() {
     const date = new Date(this.getTime());
     date.setHours(0, 0, 0, 0);
@@ -17,14 +20,25 @@ Date.prototype.getWeek = function() {
         - 3 + (week1.getDay() + 6) % 7) / 7);
 }
 
+/**
+ * Datum um eine Woche nach vorne setzen
+ */
 Date.prototype.addWeek = function() {
     this.setDate(this.getDate() + 7);
 }
 
+/**
+ * Datum um eine Woche nach hinten setzen
+ */
 Date.prototype.substractWeek = function() {
     this.setDate(this.getDate() - 7);
 }
 
+/**
+ * Gibt den Namen des Tages als String zurück
+ * @param day - Nummer des Tages
+ * @returns {string} - Name des Tages
+ */
 Date.prototype.getFullDay = function (day){
     switch (day){
         case "1": return "Montag";
@@ -37,12 +51,20 @@ Date.prototype.getFullDay = function (day){
     }
 }
 
+/**
+ * Setup der Webseite:
+ * - entfernen aller Warnungen
+ * - Laden der Berufe
+ */
 function setup(){
     $("#classes-wrapper").hide()
     resetWarnings()
     loadJobs()
 }
 
+/**
+ * Abfragen der Berufe und einsetzen in Dropdown.
+ */
 function loadJobs(){
     $.getJSON("http://sandbox.gibm.ch/berufe.php")
         .done(function (jobs){
@@ -62,12 +84,18 @@ function loadJobs(){
     })
 }
 
+/**
+ * Eventhandler bei Aushwahl eines Berufes aus dem Dropdown
+ */
 $("#jobs").change(function (){
     const selectedJob = $("#jobs").find(":selected").val();
     localStorage.setItem("job", selectedJob)
     loadClasses(selectedJob)
 })
 
+/**
+ * Eventhandler bei Auswahl einer Klasse aus dem Dropdown
+ */
 $("#classes").change(function (){
     date = new Date()
     const selectedClass = $("#classes").find(':selected').val()
@@ -75,21 +103,35 @@ $("#classes").change(function (){
     loadTimetable(selectedClass)
 })
 
+/**
+ * Eventhandler bei klick auf den Button für die vorherige Woche
+ */
 $("#previousWeek").click(function (){
     date.substractWeek()
     updateWeekSelector()
 })
 
+
+/**
+ * Eventhandler bei klick auf den Button für die nächste Woche
+ */
 $("#nextWeek").click(function (){
     date.addWeek()
     updateWeekSelector()
 })
 
+/**
+ * Updated then weekSelector mit dem neuen Datum
+ */
 function updateWeekSelector(){
     $("#selectedWeek").text((date.getWeek() < 10 ? "0" + date.getWeek() : date.getWeek()) + "-" + date.getFullYear());
     loadTimetable($("#classes").find(':selected').val());
 }
 
+/**
+ * Abfragen der Klassen des gewünschten Berufes und Einfügen in den Dropdown
+ * @param jobId - ID des ausgewählten Berufs
+ */
 function loadClasses(jobId){
     resetWarnings()
     $("#classes").find('option').remove().end();
@@ -115,6 +157,10 @@ function loadClasses(jobId){
     })
 }
 
+/**
+ * Abfragen des Stundenplans der gewünschten Klasse und Einfügen in die Tabelle
+ * @param classId - ID der gewünschten Klasse
+ */
 function loadTimetable(classId){
     resetWarnings()
     $("#selectedWeek").text((date.getWeek() < 10 ? "0" + date.getWeek() : date.getWeek()) + "-" + date.getFullYear());
@@ -145,6 +191,11 @@ function loadTimetable(classId){
         })
 }
 
+/**
+ * Erstellen und einfügen eines <div>
+ * @param error - Fehlermeldung als String
+ * @param fatal - boolean ob es ein fataler Fehler ist
+ */
 function errorDiv(error, fatal){
     if (fatal){
         $(".content").append(
@@ -157,6 +208,9 @@ function errorDiv(error, fatal){
     }
 }
 
+/**
+ * Reseten aller Fehlermeldungen
+ */
 function resetWarnings(){
     $("#timetable-wrapper").hide()
     $("#weekSelector").hide()
