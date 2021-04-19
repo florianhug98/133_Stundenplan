@@ -35,9 +35,9 @@ $(document).ready(
                                 }
                             })
                         }
-                    }
-                ).fail(function(){
-                errorDiv("Beim laden der Berufe ist ein Fehler aufgetreten", true)
+                    })
+                .fail(function(){
+                createErrorDiv("Beim laden der Berufe ist ein Fehler aufgetreten", true)
             })
         }
 
@@ -106,10 +106,10 @@ $(document).ready(
                         $("#classes-wrapper").fadeIn("fast")
                     }else{
                         $("#classes-wrapper").hide()
-                        errorDiv("Für den gewählten Beruf sind keine Klassen vorhanden", false)
+                        createErrorDiv("Für den gewählten Beruf sind keine Klassen vorhanden", false)
                     }
                 }).fail(function () {
-                errorDiv("Beim laden der Berufe ist ein Fehler aufgetreten", true)
+                createErrorDiv("Beim laden der Berufe ist ein Fehler aufgetreten", true)
             })
         }
 
@@ -139,28 +139,28 @@ $(document).ready(
                                 "</tr>")
                         })
                     }else{
-                        errorDiv("Für den Zeitraum ist kein Stundenplan vorhanden", false)
+                        createErrorDiv("Für den Zeitraum ist kein Stundenplan vorhanden", false)
                     }
                 })
                 .fail(function(){
-                    errorDiv("Beim laden des Stundenplanes ist ein Fehler aufgetreten", true)
+                    createErrorDiv("Beim laden des Stundenplanes ist ein Fehler aufgetreten", true)
                 })
         }
 
         /**
          * Erstellen und einfügen eines <div>
-         * @param error - Fehlermeldung als String
+         * @param error - Fehlermeldung
          * @param fatal - boolean ob es ein fataler Fehler ist
          */
-        function errorDiv(error, fatal){
+        function createErrorDiv(error, fatal){
             if (fatal){
-                $(".content").append(
-                    "<div id=\"error\" class=\"alert alert-danger\" role=\"alert\">\n" + error + "</div>"
-                ).fadeIn("fast")
+                $("#error").append(
+                    "<div id=\"errorContent\" class=\"alert alert-danger\" role=\"alert\">\n" + error + "</div>"
+                ).hide().fadeIn("fast")
             }else {
-                $(".content").append(
-                    "<div id=\"error\" class=\"alert alert-warning\" role=\"alert\">\n" + error + "</div>"
-                ).fadeIn("fast")
+                $("#error").append(
+                    "<div id=\"errorContent\" class=\"alert alert-warning\" role=\"alert\">\n" + error + "</div>"
+                ).hide().fadeIn("fast")
             }
         }
 
@@ -171,7 +171,7 @@ $(document).ready(
             $("#timetable-wrapper").hide()
             $("#weekSelector").hide()
 
-            $("#error").remove()
+            $("#errorContent").remove()
         }
     }
 )
