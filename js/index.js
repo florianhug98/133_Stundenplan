@@ -50,21 +50,19 @@ $(document).ready(
          * Eventhandler bei Aushwahl eines Berufes aus dem Dropdown
          */
         $("#jobs").change(function (){
-            const selectedJob = $("#jobs").find(":selected").val()
             localStorage.removeItem("class");
             reset();
 
-            localStorage.setItem("job", selectedJob);
-            loadClasses(selectedJob);
+            localStorage.setItem("job", $("#jobs").find(":selected").val());
+            loadClasses($("#jobs").find(":selected").val());
         })
 
         /**
          * Eventhandler bei Auswahl einer Klasse aus dem Dropdown
          */
         $("#classes").change(function (){
-            const selectedClass = $("#classes").find(':selected').val();
             localStorage.setItem("class", $("#classes").find(':selected').val());
-            loadTimetable(selectedClass);
+            loadTimetable($("#classes").find(':selected').val());
         })
 
         /**
@@ -178,7 +176,7 @@ $(document).ready(
         }
 
         /**
-         * Reseten aller Fehlermeldungen
+         * Reseten von Fehlermedlungen
          */
         function reset(){
             $("#timetable-wrapper").hide();
